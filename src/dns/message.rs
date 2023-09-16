@@ -1,4 +1,4 @@
-use super::enums::ResponseCode;
+use super::enums::{ResponseCode, QueryType, QueryClass};
 
 #[derive(Debug, Clone)]
 pub struct DnsHeader{
@@ -9,10 +9,9 @@ pub struct DnsHeader{
     /// specifies kind of query in this message.
     pub opcode: u8,
 
-
     /// Query/Response
     /// 
-    /// [bool] field that specifies whether this message is a 
+    /// [`bool`] field that specifies whether this message is a 
     /// query (false), or a response (true).
     pub qr: bool,
     /// Authoritative answer
@@ -74,6 +73,43 @@ impl Default for DnsHeader {
             ancount: 0,
             nscount: 0,
             arcount: 0,
+        }
+    }
+}
+
+
+#[derive(Debug, Clone)]
+pub struct DnsQuestion {
+    /// Label sequence
+    /// 
+    /// A domain name represented as a sequence of labels.
+    pub name: String,
+    /// Query type
+    /// 
+    /// Specifies the type of the query.
+    pub qtype: QueryType,
+    /// Query class
+    /// 
+    /// specifies the class of the query.
+    pub qclass: QueryClass
+}
+
+impl DnsQuestion {
+    pub fn new(name: String, qtype: QueryType, qclass: QueryClass) -> Self {
+        Self {
+            name,
+            qtype,
+            qclass
+        }
+    }
+}
+
+impl Default for DnsQuestion {
+    fn default() -> Self {
+        Self {
+            name: "".to_string(),
+            qtype: QueryType::ALL,
+            qclass: QueryClass::ALL,
         }
     }
 }

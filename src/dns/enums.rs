@@ -111,7 +111,7 @@ impl From<Class> for u16 {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum QueryClass {
     Class(Class),
-    All,
+    ALL,
 }
 
 impl From<QueryClass> for u16 {
