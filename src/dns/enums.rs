@@ -1,7 +1,7 @@
 
 /// Type Field used in Resource Records (RR)
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum EnumType {
+pub enum QueryType {
     /// Host address
     A = 1,
     /// Authoritative name server
@@ -34,93 +34,40 @@ pub enum EnumType {
     MX = 15,
     /// Text strings
     TXT = 16,
-}
 
-impl From<EnumType> for u16 {
-    fn from(value: EnumType) -> Self {
-        match value {
-            EnumType::A => 1,
-            EnumType::NS => 2,
-            EnumType::MD => 3,
-            EnumType::MF => 4,
-            EnumType::CNAME => 5,
-            EnumType::SOA => 6,
-            EnumType::MB => 7,
-            EnumType::MG => 8,
-            EnumType::MR => 9,
-            EnumType::NULL => 10,
-            EnumType::WKS => 11,
-            EnumType::PTR => 12,
-            EnumType::HINFO => 13,
-            EnumType::MINFO => 14,
-            EnumType::MX => 15,
-            EnumType::TXT => 16,
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum QueryType{
-    /// All Types from [EnumType]
-    EnumType(EnumType),
+    /// QType - Transfer zone
+    /// 
     /// Request for a transfer of an entire zone
-    AXFR,
+    AXFR = 252,
+    /// QType - Mailbox records
+    /// 
     /// Request for mailbox-related records (MB, MG or MR)
-    MAILB,
+    MAILB = 253,
+    /// QType - Mail agent
+    /// 
     /// Request for mail agent RRs (Obsolete - see MX)
-    MAILA,
+    MAILA = 254,
+    /// QType - All
+    /// 
     /// Request for all records
-    ALL,
-}
-
-impl From<QueryType> for u16 {
-    fn from(value: QueryType) -> Self {
-        match value {
-            QueryType::EnumType(x) => x.into(),
-            QueryType::AXFR => 252,
-            QueryType::MAILB => 253,
-            QueryType::MAILA => 254,
-            QueryType::ALL => 255,
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Class {
-    /// Internet
-    IN,
-    /// CSNET class (Obsolete - used only for examples in some obsolete RFCs)
-    CS,
-    /// CHAOS class
-    CH,
-    /// Hesiod
-    HS,
-}
-
-impl From<Class> for u16 {
-    fn from(value: Class) -> Self {
-        match value {
-            Class::IN => 1,
-            Class::CS => 2,
-            Class::CH => 3,
-            Class::HS => 4,
-        }
-    }
+    ALL = 255,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum QueryClass {
-    Class(Class),
-    ALL,
-}
+    /// Internet
+    IN = 1,
+    /// CSNET class (Obsolete - used only for examples in some obsolete RFCs)
+    CS = 2,
+    /// CHAOS class
+    CH = 3,
+    /// Hesiod
+    HS = 4,
 
-impl From<QueryClass> for u16 {
-    fn from(value: QueryClass) -> Self {
-        match value {
-            QueryClass::Class(x) => x.into(),
-            QueryClass::All => 255,
-        }
-    }
+    /// QClass - All
+    ///
+    /// All classes
+    ALL = 255
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
