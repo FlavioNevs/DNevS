@@ -59,7 +59,7 @@ impl From<EnumType> for u16 {
     }
 }
 
-
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum QueryType{
     /// All Types from [EnumType]
     EnumType(EnumType),
@@ -85,6 +85,7 @@ impl From<QueryType> for u16 {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ClassType {
     /// Internet
     IN,
@@ -107,6 +108,7 @@ impl From<ClassType> for u16 {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum QueryClassType {
     ClassType(ClassType),
     All,
