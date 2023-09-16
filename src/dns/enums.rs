@@ -86,7 +86,7 @@ impl From<QueryType> for u16 {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ClassType {
+pub enum Class {
     /// Internet
     IN,
     /// CSNET class (Obsolete - used only for examples in some obsolete RFCs)
@@ -97,28 +97,28 @@ pub enum ClassType {
     HS,
 }
 
-impl From<ClassType> for u16 {
-    fn from(value: ClassType) -> Self {
+impl From<Class> for u16 {
+    fn from(value: Class) -> Self {
         match value {
-            ClassType::IN => 1,
-            ClassType::CS => 2,
-            ClassType::CH => 3,
-            ClassType::HS => 4,
+            Class::IN => 1,
+            Class::CS => 2,
+            Class::CH => 3,
+            Class::HS => 4,
         }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum QueryClassType {
-    ClassType(ClassType),
+pub enum QueryClass {
+    Class(Class),
     All,
 }
 
-impl From<QueryClassType> for u16 {
-    fn from(value: QueryClassType) -> Self {
+impl From<QueryClass> for u16 {
+    fn from(value: QueryClass) -> Self {
         match value {
-            QueryClassType::ClassType(x) => x.into(),
-            QueryClassType::All => 255,
+            QueryClass::Class(x) => x.into(),
+            QueryClass::All => 255,
         }
     }
 }
