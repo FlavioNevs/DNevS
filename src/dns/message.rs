@@ -1,4 +1,6 @@
-use super::enums::{ResponseCode, QueryType, QueryClass};
+use std::net::Ipv4Addr;
+
+use super::{enums::{ResponseCode, QueryType, QueryClass}, buffer::DnsPacketBuffer};
 
 #[derive(Debug, Clone)]
 pub struct DnsHeader{
@@ -34,7 +36,7 @@ pub struct DnsHeader{
     pub ra: bool,
 
     /// Reserved
-    pub z: u8,
+    pub z: bool,
     /// Response code
     pub rcode: ResponseCode,
 
@@ -67,12 +69,41 @@ impl Default for DnsHeader {
             tc: false,
             rd: false,
             ra: false,
-            z: 0,
+            z: false,
             rcode: ResponseCode::NOERROR,
             qdcount: 0,
             ancount: 0,
             nscount: 0,
             arcount: 0,
+        }
+    }
+}
+
+impl From<&mut DnsPacketBuffer> for DnsHeader {
+    fn from(value: &mut DnsPacketBuffer) -> Self {
+        let id = value.read_u16().unwrap();
+
+        let flags = value.read_u16().unwrap();
+        let a = (flags >> 8) as u8;
+        let b = (flags & 0xFF) as u8;
+
+        Self {
+            id,
+            rd: (a & (1 << 0)) > 0,
+            tc: (a & (1 << 1)) > 0,
+            aa: (a & (1 << 2)) > 0,
+            opcode: (a >> 3) & 0x0F,
+            qr: (a & (1 << 7)) > 0,
+
+            rcode: ResponseCode::from(b & 0x0F),
+
+            z: (b & (1 << 6)) > 0,
+            ra:  (b & (1 << 7)) > 0,
+
+            qdcount: value.read_u16().unwrap(),
+            ancount: value.read_u16().unwrap(),
+            nscount: value.read_u16().unwrap(),
+            arcount: value.read_u16().unwrap(),
         }
     }
 }
@@ -110,6 +141,60 @@ impl Default for DnsQuestion {
             name: "".to_string(),
             qtype: QueryType::ALL,
             qclass: QueryClass::ALL,
+        }
+    }
+}
+
+impl From<&mut DnsPacketBuffer> for DnsQuestion {
+    fn from(value: &mut DnsPacketBuffer) -> Self {
+        let mut question = DnsQuestion::default();
+
+        value.read_qname(&mut question.name).unwrap();
+        question.qtype = QueryType::from(value.read_u16().unwrap());
+        question.qclass = QueryClass::from(value.read_u16().unwrap());
+
+        question
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum DnsRecord {
+    A {
+        domain: String,
+        addr: Ipv4Addr,
+        ttl: u32
+    },
+    None
+}
+
+impl From<&mut DnsPacketBuffer> for DnsRecord {
+    fn from(value: &mut DnsPacketBuffer) -> Self {
+        let mut domain = String::new();
+        value.read_qname(&mut domain).unwrap();
+
+        let qtype_num = value.read_u16().unwrap();
+        let qtype = QueryType::from(qtype_num);
+        let _ = value.read_u16().unwrap();
+        let ttl = value.read_u32().unwrap();
+        let data_len = value.read_u16().unwrap();
+
+        match qtype {
+            QueryType::A => {
+                let raw_addr = value.read_u32().unwrap();
+                let addr = Ipv4Addr::new(
+                    ((raw_addr >> 24) & 0xFF) as u8,
+                    ((raw_addr >> 16) & 0xFF) as u8,
+                    ((raw_addr >> 8) & 0xFF) as u8,
+                    ((raw_addr >> 0) & 0xFF) as u8,
+                );
+
+                DnsRecord::A {
+                    domain: domain,
+                    addr: addr,
+                    ttl: ttl,
+                }
+            }
+            _ => todo!()
         }
     }
 }
