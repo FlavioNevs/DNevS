@@ -26,13 +26,13 @@ pub struct DnsHeader{
     /// greater than that permitted on the transmission channel.
     pub tc: bool,
     /// Recursion Desired
-    pub rd: Option<bool>,
+    pub rd: bool,
     /// Recursion available
     /// 
     /// this be is set or cleared in a response, and denotes 
     /// whether recursive query support is available in the name 
     /// server.
-    pub ra: Option<bool>,
+    pub ra: bool,
 
     /// Reserved
     pub z: u8,
@@ -56,4 +56,24 @@ pub struct DnsHeader{
     /// 
     /// Number of resource records in the additional records section.
     pub arcount: u16,
+}
+
+impl Default for DnsHeader {
+    fn default() -> Self {
+        Self {
+            id: 0,
+            opcode: 0,
+            qr: false,
+            aa: false,
+            tc: false,
+            rd: false,
+            ra: false,
+            z: 0,
+            rcode: ResponseCode::NOERROR,
+            qdcount: 0,
+            ancount: 0,
+            nscount: 0,
+            arcount: 0,
+        }
+    }
 }
