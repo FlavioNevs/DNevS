@@ -53,6 +53,35 @@ pub enum QueryType {
     ALL = 255,
 }
 
+impl From<u16> for QueryType {
+    fn from(value: u16) -> Self {
+        match value {
+            1 => QueryType::A,
+            2 => QueryType::NS,
+            3 => QueryType::MD,
+            4 => QueryType::MF,
+            5 => QueryType::CNAME,
+            6 => QueryType::SOA,
+            7 => QueryType::MB,
+            8 => QueryType::MG,
+            9 => QueryType::MR,
+            10 => QueryType::NULL,
+            11 => QueryType::WKS,
+            12 => QueryType::PTR,
+            13 => QueryType::HINFO,
+            14 => QueryType::MINFO,
+            15 => QueryType::MX,
+            16 => QueryType::TXT,
+            252 => QueryType::AXFR,
+            253 => QueryType::MAILB,
+            254 => QueryType::MAILA,
+            255 => QueryType::ALL,
+            _ => todo!()
+        }
+    }
+}
+
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum QueryClass {
     /// Internet
@@ -69,6 +98,20 @@ pub enum QueryClass {
     /// All classes
     ALL = 255
 }
+
+impl From<u16> for QueryClass {
+    fn from(value: u16) -> Self {
+        match value {
+            1 => QueryClass::IN,
+            2 => QueryClass::CS,
+            3 => QueryClass::CH,
+            4 =>  QueryClass::HS,
+            255 =>  QueryClass::ALL,
+            _ => todo!(),
+        }
+    }
+}
+
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ResponseCode {
@@ -98,4 +141,18 @@ pub enum ResponseCode {
     /// The name server refuses to perform the specified operation for
     /// policy reasons.
     REFUSED = 5,
+}
+
+impl From<u8> for ResponseCode {
+    fn from(value: u8) -> Self {
+        match value {
+            0 => ResponseCode::NOERROR,
+            1 => ResponseCode::FORMERR,
+            2 => ResponseCode::SERVFAIL,
+            3 => ResponseCode::NXDOMAIN,
+            4 => ResponseCode::NOTIMP,
+            6 => ResponseCode::REFUSED,
+            _ => todo!()
+        }
+    }
 }
