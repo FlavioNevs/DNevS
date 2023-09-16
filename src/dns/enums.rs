@@ -1,41 +1,42 @@
 
 /// Type Field used in Resource Records (RR)
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum EnumType {
     /// Host address
-    A,
+    A = 1,
     /// Authoritative name server
-    NS,
+    NS = 2,
     /// Mail destination (Obsolete - use MX)
-    MD,
+    MD = 3,
     /// Mail forwarder (Obsolete - use MX)
-    MF,
+    MF = 4,
     /// Canonical name for alias
-    CNAME,
+    CNAME = 5,
     /// Start of a zone of authority
-    SOA,
+    SOA = 6,
     /// Mailbox domain name (EXPERIMENTAL)
-    MB,
+    MB = 7,
     /// Mail group member (EXPERIMENTAL)
-    MG,
+    MG = 8,
     /// Mail rename domain name (EXPERIMENTAL)
-    MR,
+    MR = 9,
     /// Null RR (EXPERIMENTAL)
-    NULL,
+    NULL = 10,
     /// Well known service description
-    WKS,
+    WKS = 11,
     /// Domain name pointer
-    PTR,
+    PTR = 12,
     /// Host information
-    HINFO,
+    HINFO = 13,
     /// Mailbox or mail list information
-    MINFO,
+    MINFO = 14,
     /// Mailbox Exchange
-    MX,
+    MX = 15,
     /// Text strings
-    TXT
+    TXT = 16,
 }
 
-impl From<EnumType> for i32 {
+impl From<EnumType> for u16 {
     fn from(value: EnumType) -> Self {
         match value {
             EnumType::A => 1,
@@ -59,7 +60,7 @@ impl From<EnumType> for i32 {
 }
 
 
-pub enum EnumQType{
+pub enum QueryType{
     /// All Types from [EnumType]
     EnumType(EnumType),
     /// Request for a transfer of an entire zone
@@ -72,19 +73,19 @@ pub enum EnumQType{
     ALL,
 }
 
-impl From<EnumQType> for i32 {
-    fn from(value: EnumQType) -> Self {
+impl From<QueryType> for u16 {
+    fn from(value: QueryType) -> Self {
         match value {
-            EnumQType::EnumType(x) => x.into(),
-            EnumQType::AXFR => 252,
-            EnumQType::MAILB => 253,
-            EnumQType::MAILA => 254,
-            EnumQType::ALL => 255,
+            QueryType::EnumType(x) => x.into(),
+            QueryType::AXFR => 252,
+            QueryType::MAILB => 253,
+            QueryType::MAILA => 254,
+            QueryType::ALL => 255,
         }
     }
 }
 
-pub enum EnumClass {
+pub enum ClassType {
     /// Internet
     IN,
     /// CSNET class (Obsolete - used only for examples in some obsolete RFCs)
@@ -95,27 +96,57 @@ pub enum EnumClass {
     HS,
 }
 
-impl From<EnumClass> for i32 {
-    fn from(value: EnumClass) -> Self {
+impl From<ClassType> for u16 {
+    fn from(value: ClassType) -> Self {
         match value {
-            EnumClass::IN => 1,
-            EnumClass::CS => 2,
-            EnumClass::CH => 3,
-            EnumClass::HS => 4,
+            ClassType::IN => 1,
+            ClassType::CS => 2,
+            ClassType::CH => 3,
+            ClassType::HS => 4,
         }
     }
 }
 
-pub enum EnumQClass {
-    EnumClass(EnumClass),
+pub enum QueryClassType {
+    ClassType(ClassType),
     All,
 }
 
-impl From<EnumQClass> for i32 {
-    fn from(value: EnumQClass) -> Self {
+impl From<QueryClassType> for u16 {
+    fn from(value: QueryClassType) -> Self {
         match value {
-            EnumQClass::EnumClass(x) => x.into(),
-            EnumQClass::All => 255,
+            QueryClassType::ClassType(x) => x.into(),
+            QueryClassType::All => 255,
         }
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ResponseCode {
+    /// No error condition
+    NOERROR = 0,
+    /// Format error
+    /// 
+    /// The name server was unable to interpret the query.
+    FORMERR = 1,
+    ///  Server failure
+    /// 
+    /// The name server was unable to process this query due to a 
+    /// problem with the name server.
+    SERVFAIL = 2,
+    /// Name Error
+    /// 
+    /// Meaningful only for responses from an authoritative name 
+    /// server, this code signifies that the domain name referenced 
+    /// in the query does not exist.
+    NXDOMAIN = 3,
+    /// Not Implemented
+    /// 
+    /// The name server does not support the requested kind of query.
+    NOTIMP = 4,
+    /// Refused
+    /// 
+    /// The name server refuses to perform the specified operation for
+    /// policy reasons.
+    REFUSED = 5,
 }
